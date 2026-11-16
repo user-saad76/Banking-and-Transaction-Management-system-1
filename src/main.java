@@ -168,7 +168,7 @@ public class main {
                 System.out.println("2,Deposit ");
                 System.out.println("3,WithDraw ");
                 System.out.println("4,Profit ");
-                System.out.println("4,Exit ");
+                System.out.println("6,Exit ");
                 System.out.println();
                 savingsAccounts[x] = new SavingsAccount(
                         name[x], fatherName[x], age[x], phoneNo[x],
@@ -194,7 +194,7 @@ public class main {
                     } else if (givingNumber == 4) {
                         System.out.println("*********Profit*************");
                         savingsAccounts[x].calculateProfit();
-                    } else if (givingNumber == 5) {
+                    } else if (givingNumber == 6) {
                         break;
                     }
                 }
