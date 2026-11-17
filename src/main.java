@@ -59,15 +59,21 @@ class SavingsAccount extends Account{
 
     void deposit(double amount){
         System.out.println("*****************************");
-        System.out.println("You have deposit " + amount);
-        balance = balance + amount;
-        System.out.println("Now total balance = " + balance);
+        if(amount>0){
+            System.out.println("You have deposit " + amount);
+            balance = balance + amount;
+            System.out.println("Now total balance = " + balance);
+        }
+        else{
+            System.out.println("You have enter invaild deposit.");
+        }
+
         System.out.println("*****************************");
     }
     void WithDraw(double amount){
         System.out.println("*****************************");
         System.out.println("You have withdraw " + amount);
-        if(amount<=balance){
+        if(amount<=balance&&amount>0){
             balance = balance - amount;
         }
         System.out.println("Now total balance = " + Math.abs(balance));
@@ -86,6 +92,41 @@ class CurrentAccount extends Account {
        CurrentAccount(String name,String fatherName,int age,String phoneNo,String CNIC,String address, String password,String role){
            super(name, fatherName, age, phoneNo, CNIC, address, password,role);
        }
+    void Balance(){
+        System.out.println("The Intial balance = " + balance);
+    }
+
+
+    void calculateProfit(){
+        double profit = balance*(profitRate/100);
+        System.out.println("Your profit = " + profit);
+        balance = balance + profit;
+        System.out.println("Balance = " + balance);
+    }
+
+    void deposit(double amount){
+        System.out.println("*****************************");
+        if(amount>0){
+            System.out.println("You have deposit " + amount);
+            balance = balance + amount;
+            System.out.println("Now total balance = " + balance);
+        }
+        System.out.println("*****************************");
+    }
+    void WithDraw(double amount){
+        System.out.println("*****************************");
+        System.out.println("You have withdraw " + amount);
+        if(amount<=balance&&amount>0){
+            balance = balance - amount;
+            System.out.println("Now total balance = " + Math.abs(balance));
+        }
+        else{
+            System.out.println("You have enter invalid amount");
+        }
+
+
+        System.out.println("*****************************");
+    }
 
 
 }
@@ -101,7 +142,7 @@ public class main {
         System.out.println("*********************BANKING & TRANSACTION MANAGEMENT SYSTEM*********************");
         Scanner input = new Scanner(System.in);
         System.out.println();
-        int totalAccounts = 5;
+        int totalAccounts = 10;
         String[] name = new String[totalAccounts];
         String[] fatherName = new String[totalAccounts];
         int[] age = new int[totalAccounts];
@@ -114,8 +155,10 @@ public class main {
         int[] withdrawalAmounts = new int[totalAccounts];
         SavingsAccount[] savingsAccounts = new SavingsAccount[totalAccounts];
         CurrentAccount[] currentAccounts = new CurrentAccount[totalAccounts];
+
         int x = 0;
-        while (x < totalAccounts) {
+
+        while (x<totalAccounts) {
             boolean isSavingAccountCreated = false;
             boolean isCurrentAccountCreated = false;
             System.out.println("You have 2 options for creating account : ");
@@ -197,8 +240,95 @@ public class main {
                     } else if (givingNumber == 6) {
                         break;
                     }
+                    else{
+                        System.out.println("Your have enter invaild in menu");
+                    }
+                }
+                System.out.print("You want to make new saving account (Yes/No) : ");
+                input.nextLine();
+                String NewAccount = input.nextLine();
+                if(NewAccount.equalsIgnoreCase("Yes")){
+                    x++;
                 }
             }
+
+
+            // Current acount logic implemented
+            if(isCurrentAccountCreated){
+                input.nextLine();
+                System.out.print("Enter your name : ");
+                name[x] = input.nextLine();
+                System.out.print("Enter your father name: ");
+                fatherName[x] = input.nextLine();
+                System.out.print("Enter your age : ");
+                age[x] = input.nextInt();
+                if (age[x] >= 15) {
+                    input.nextLine();
+                    System.out.print("Enter your phone number : ");
+                    phoneNo[x] = input.nextLine();
+                    System.out.print("Enter your CNIC : ");
+                     CNIC[x] = input.nextLine();
+                    System.out.print("Enter your address : ");
+                    address[x] = input.nextLine();
+                    System.out.print("Enter your password : ");
+                    password[x] = input.nextLine();
+                    System.out.print("Enter your role : ");
+                    role[x] = input.nextLine();
+                } else {
+                    System.out.println("Your age is invalid for creating account");
+                    isCurrentAccountCreated = false;
+                }
+            }
+
+            if (isCurrentAccountCreated) {
+                System.out.println("Your current account is created successfully.");
+                System.out.println("********************************");
+                System.out.println();
+                System.out.println("Welcome " + name[x]);
+                System.out.println();
+                System.out.println("1,Check your balance ");
+                System.out.println("2,Deposit ");
+                System.out.println("3,WithDraw ");
+                System.out.println("4,Profit ");
+                System.out.println("6,Exit ");
+                System.out.println();
+                currentAccounts[x] = new CurrentAccount(
+                        name[x], fatherName[x], age[x], phoneNo[x],
+                        CNIC[x], address[x], password[x], role[x]
+                );
+                while (true) {
+                    System.out.print("Enter your option : ");
+                    int givingNumber = input.nextInt();
+                    if (givingNumber == 1) {
+                        currentAccounts[x].Balance();
+                    } else if (givingNumber == 2) {
+                        System.out.print("Enter amount you want to deposit : ");
+                        amountData[x] = input.nextInt();
+                        currentAccounts[x].deposit(amountData[x]);
+                    } else if (givingNumber == 3) {
+                        System.out.println("Enter amount you want to withdraw : ");
+                        withdrawalAmounts[x] = input.nextInt();
+                        if (withdrawalAmounts[x] > 0) {
+                            currentAccounts[x].WithDraw(withdrawalAmounts[x]);
+                        } else {
+                            System.out.println("Negative value amount are not allowed");
+                        }
+                    } else if (givingNumber == 4) {
+                        System.out.println("*********Profit*************");
+                       currentAccounts[x].calculateProfit();
+                    } else if (givingNumber == 6) {
+                        break;
+                    }
+                }
+                System.out.print("You want to make new current account (Yes/No) : ");
+                input.nextLine();
+                String NewAccount = input.nextLine();
+                if(NewAccount.equalsIgnoreCase("Yes")){
+                    x++;
+                }
+            }
+
+
 
 
         }
