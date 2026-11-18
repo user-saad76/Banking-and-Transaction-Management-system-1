@@ -29,7 +29,6 @@ class Account{
         System.out.println("Phone number  = " + phoneNo);
         System.out.println("CNIC = " + CNIC);
         System.out.println("Address = " + address);
-        System.out.println("Password = " + password);
         System.out.println("Role = " + role);
         System.out.println("***********************");
     }
@@ -155,8 +154,11 @@ public class main {
         int[] withdrawalAmounts = new int[totalAccounts];
         SavingsAccount[] savingsAccounts = new SavingsAccount[totalAccounts];
         CurrentAccount[] currentAccounts = new CurrentAccount[totalAccounts];
+        int[] getAmountDeposit = new int[totalAccounts];
+        int [] getAmountWithdraw = new int[totalAccounts];
 
         int x = 0;
+        int count = 0;
 
         while (x<totalAccounts) {
             boolean isSavingAccountCreated = false;
@@ -211,6 +213,7 @@ public class main {
                 System.out.println("2,Deposit ");
                 System.out.println("3,WithDraw ");
                 System.out.println("4,Profit ");
+                System.out.println("5,Checking transaction history ");
                 System.out.println("6,Exit ");
                 System.out.println();
                 savingsAccounts[x] = new SavingsAccount(
@@ -222,21 +225,53 @@ public class main {
                     int givingNumber = input.nextInt();
                     if (givingNumber == 1) {
                         savingsAccounts[x].Balance();
+
                     } else if (givingNumber == 2) {
                         System.out.print("Enter amount you want to deposit : ");
                         amountData[x] = input.nextInt();
-                        savingsAccounts[x].deposit(amountData[x]);
+                        if(amountData[x]>0){
+                            getAmountDeposit[count] = amountData[x];
+                            if(count<totalAccounts){
+                                count++;
+                            }
+                            savingsAccounts[x].deposit(amountData[x]);
+                        }
+
                     } else if (givingNumber == 3) {
                         System.out.println("Enter amount you want to withdraw : ");
                         withdrawalAmounts[x] = input.nextInt();
                         if (withdrawalAmounts[x] > 0) {
                             savingsAccounts[x].WithDraw(withdrawalAmounts[x]);
+
+                            getAmountWithdraw[x] = withdrawalAmounts[x];
                         } else {
                             System.out.println("Negative value amount are not allowed");
                         }
-                    } else if (givingNumber == 4) {
+                    }
+                    else if (givingNumber == 4) {
                         System.out.println("*********Profit*************");
                         savingsAccounts[x].calculateProfit();
+                    }
+                    else if (givingNumber == 5) {
+                        System.out.println("***********Transaction history*************");
+                         for(int b = 0;b<totalAccounts;b++){
+                             if(savingsAccounts[b]!=null){
+                                 System.out.println("*****************************");
+                                 System.out.println();
+                                 System.out.println("Account holder : " + name[b]);
+                                 savingsAccounts[b].Balance();
+                                 for(int t = 0;t<totalAccounts;t++){
+                                     if(getAmountDeposit[t]>0){
+                                         System.out.println("Deposit " + (t+1) + " : " +getAmountDeposit[t]);
+                                     }
+                                     if(getAmountWithdraw[t]>0){
+                                         System.out.println("WithDraw " + (t+1) + " : " +getAmountWithdraw[t]);
+                                     }
+
+                                 }
+                                 System.out.println("*******************************");
+                             }
+                         }
                     } else if (givingNumber == 6) {
                         break;
                     }
