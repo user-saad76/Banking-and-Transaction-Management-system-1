@@ -154,12 +154,11 @@ public class main {
         int[] withdrawalAmounts = new int[totalAccounts];
         SavingsAccount[] savingsAccounts = new SavingsAccount[totalAccounts];
         CurrentAccount[] currentAccounts = new CurrentAccount[totalAccounts];
-        int[] getAmountDeposit = new int[totalAccounts];
-        int [] getAmountWithdraw = new int[totalAccounts];
+         int totalTransaction = 5;
+         int[][] transaction = new int[totalAccounts][totalTransaction];
+         int[] transactionCount = new int[totalTransaction];
 
         int x = 0;
-        int count = 0;
-
         while (x<totalAccounts) {
             boolean isSavingAccountCreated = false;
             boolean isCurrentAccountCreated = false;
@@ -214,12 +213,13 @@ public class main {
                 System.out.println("3,WithDraw ");
                 System.out.println("4,Profit ");
                 System.out.println("5,Checking transaction history ");
-                System.out.println("6,Exit ");
+                System.out.println("6,Transfer money ");
                 System.out.println();
                 savingsAccounts[x] = new SavingsAccount(
                         name[x], fatherName[x], age[x], phoneNo[x],
                         CNIC[x], address[x], password[x], role[x]
                 );
+                int count = 0;
                 while (true) {
                     System.out.print("Enter your option : ");
                     int givingNumber = input.nextInt();
@@ -230,20 +230,31 @@ public class main {
                         System.out.print("Enter amount you want to deposit : ");
                         amountData[x] = input.nextInt();
                         if(amountData[x]>0){
-                            getAmountDeposit[count] = amountData[x];
-                            if(count<totalAccounts){
+                            if(count<totalTransaction){
+                                savingsAccounts[x].deposit(amountData[x]);
+                                transactionCount[count] =  + amountData[x];
+                                transaction[x][count] = + amountData[x];
                                 count++;
                             }
-                            savingsAccounts[x].deposit(amountData[x]);
+                            else{
+                                System.out.println("Your transaction cross limited");
+                            }
                         }
 
                     } else if (givingNumber == 3) {
                         System.out.println("Enter amount you want to withdraw : ");
                         withdrawalAmounts[x] = input.nextInt();
                         if (withdrawalAmounts[x] > 0) {
-                            savingsAccounts[x].WithDraw(withdrawalAmounts[x]);
+                            if(count<totalTransaction){
+                                savingsAccounts[x].WithDraw(withdrawalAmounts[x]);
+                                transactionCount[count] = - withdrawalAmounts[x];
+                                transaction[x][count] = - withdrawalAmounts[x];
+                                count++;
+                            }
+                            else{
+                                System.out.println("Your transaction cross limited");
+                            }
 
-                            getAmountWithdraw[x] = withdrawalAmounts[x];
                         } else {
                             System.out.println("Negative value amount are not allowed");
                         }
@@ -254,25 +265,39 @@ public class main {
                     }
                     else if (givingNumber == 5) {
                         System.out.println("***********Transaction history*************");
-                         for(int b = 0;b<totalAccounts;b++){
-                             if(savingsAccounts[b]!=null){
-                                 System.out.println("*****************************");
-                                 System.out.println();
-                                 System.out.println("Account holder : " + name[b]);
-                                 savingsAccounts[b].Balance();
-                                 for(int t = 0;t<totalAccounts;t++){
-                                     if(getAmountDeposit[t]>0){
-                                         System.out.println("Deposit " + (t+1) + " : " +getAmountDeposit[t]);
-                                     }
-                                     if(getAmountWithdraw[t]>0){
-                                         System.out.println("WithDraw " + (t+1) + " : " +getAmountWithdraw[t]);
-                                     }
+                        System.out.println();
+                        System.out.println("Account name : " + name[x]);
+                        System.out.println();
+                        for(int z = 0;z<totalTransaction;z++){
+                            if(transactionCount[z]!=0){
+                                System.out.println("Transaction - " + (z+1) + " : " + transactionCount[z]);
+                            }
+                        }
+                        System.out.println();
 
-                                 }
-                                 System.out.println("*******************************");
-                             }
-                         }
-                    } else if (givingNumber == 6) {
+
+                    }
+                    else if(givingNumber == 6){
+                        System.out.println("*************Money Transfer***************");
+                        System.out.println();
+                        boolean isPhoneNumberisMatched = false;
+                        input.nextLine();
+                        System.out.println("Enter the phone number which you want to transfer : ");
+                        String transferNumber = input.nextLine();
+                        for(int i = 0;i<totalAccounts;i++){
+                            if(transferNumber.equalsIgnoreCase(phoneNo[i])){
+                                isPhoneNumberisMatched = true;
+                                System.out.print("Enter amount you have to transfer : ");
+                                int transferAmount = input.nextInt();
+                                savingsAccounts[i].deposit(transferAmount);
+
+                            }
+                        }
+                        if(!isPhoneNumberisMatched){
+                            System.out.println("The phone number is invaild ");
+                        }
+                    }
+                    else if (givingNumber == 7) {
                         break;
                     }
                     else{
