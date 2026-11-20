@@ -37,26 +37,27 @@ class Account{
 }
 
 class SavingsAccount extends Account{
-      private double balance;
+      private int balance;
        double amount;
-      double profitRate = 10.0;
+      int profitRate = 10;
 
      SavingsAccount(String name,String fatherName,int age,String phoneNo,String CNIC,String address, String password,String role){
          super(name, fatherName, age, phoneNo, CNIC, address, password,role);
      }
-      void Balance(){
-          System.out.println("The Intial balance = " + balance);
+      int Balance(){
+//          System.out.println("The Intial balance = " + balance);
+          return balance;
       }
 
 
      void calculateProfit(){
-         double profit = balance*(profitRate/100);
+         int profit = balance*(profitRate/100);
          System.out.println("Your profit = " + profit);
          balance = balance + profit;
          System.out.println("Balance = " + balance);
      }
 
-    void deposit(double amount){
+    void deposit(int amount){
         System.out.println("*****************************");
         if(amount>0){
             System.out.println("You have deposit " + amount);
@@ -69,7 +70,7 @@ class SavingsAccount extends Account{
 
         System.out.println("*****************************");
     }
-    void WithDraw(double amount){
+    void WithDraw(int amount){
         System.out.println("*****************************");
         System.out.println("You have withdraw " + amount);
         if(amount<=balance&&amount>0){
@@ -85,8 +86,6 @@ class SavingsAccount extends Account{
 
 class CurrentAccount extends Account {
     private double balance;
-    double amount;
-    double profitRate = 0;
 
        CurrentAccount(String name,String fatherName,int age,String phoneNo,String CNIC,String address, String password,String role){
            super(name, fatherName, age, phoneNo, CNIC, address, password,role);
@@ -95,13 +94,6 @@ class CurrentAccount extends Account {
         System.out.println("The Intial balance = " + balance);
     }
 
-
-    void calculateProfit(){
-        double profit = balance*(profitRate/100);
-        System.out.println("Your profit = " + profit);
-        balance = balance + profit;
-        System.out.println("Balance = " + balance);
-    }
 
     void deposit(double amount){
         System.out.println("*****************************");
@@ -157,6 +149,7 @@ public class main {
          int totalTransaction = 5;
          int[][] transaction = new int[totalAccounts][totalTransaction];
          int[] transactionCount = new int[totalTransaction];
+         int[] transactionCurrentAccount = new int[totalTransaction];
 
         int x = 0;
         while (x<totalAccounts) {
@@ -244,7 +237,7 @@ public class main {
                     } else if (givingNumber == 3) {
                         System.out.println("Enter amount you want to withdraw : ");
                         withdrawalAmounts[x] = input.nextInt();
-                        if (withdrawalAmounts[x] > 0) {
+                        if (withdrawalAmounts[x] > 0&& withdrawalAmounts[x]<=savingsAccounts[x].Balance()) {
                             if(count<totalTransaction){
                                 savingsAccounts[x].WithDraw(withdrawalAmounts[x]);
                                 transactionCount[count] = - withdrawalAmounts[x];
@@ -282,14 +275,22 @@ public class main {
                         System.out.println();
                         boolean isPhoneNumberisMatched = false;
                         input.nextLine();
-                        System.out.println("Enter the phone number which you want to transfer : ");
+                        System.out.print("Enter the phone number which you want to transfer : ");
                         String transferNumber = input.nextLine();
                         for(int i = 0;i<totalAccounts;i++){
                             if(transferNumber.equalsIgnoreCase(phoneNo[i])){
                                 isPhoneNumberisMatched = true;
                                 System.out.print("Enter amount you have to transfer : ");
                                 int transferAmount = input.nextInt();
-                                savingsAccounts[i].deposit(transferAmount);
+                                if(transferAmount<=savingsAccounts[x].Balance()){
+                                    savingsAccounts[x].WithDraw(transferAmount);
+                                    System.out.println("************************");
+                                    System.out.println("Account name you have transfer : " + name[i]);
+                                    savingsAccounts[i].deposit(transferAmount);
+                                    System.out.println("************************");
+                                    // 035242775
+
+                                }
 
                             }
                         }
@@ -349,13 +350,15 @@ public class main {
                 System.out.println("1,Check your balance ");
                 System.out.println("2,Deposit ");
                 System.out.println("3,WithDraw ");
-                System.out.println("4,Profit ");
+                System.out.println("4,Transaction history ");
+                System.out.println("5,Money Transfer ");
                 System.out.println("6,Exit ");
                 System.out.println();
                 currentAccounts[x] = new CurrentAccount(
                         name[x], fatherName[x], age[x], phoneNo[x],
                         CNIC[x], address[x], password[x], role[x]
                 );
+                int count = 0;
                 while (true) {
                     System.out.print("Enter your option : ");
                     int givingNumber = input.nextInt();
@@ -364,19 +367,75 @@ public class main {
                     } else if (givingNumber == 2) {
                         System.out.print("Enter amount you want to deposit : ");
                         amountData[x] = input.nextInt();
-                        currentAccounts[x].deposit(amountData[x]);
+                        if(amountData[x]>0){
+                            if(count<totalTransaction){
+                                currentAccounts[x].deposit(amountData[x]);
+                                transactionCurrentAccount[count] =  + amountData[x];
+//                                transaction[x][count] = + amountData[x];
+                                count++;
+                            }
+                            else{
+                                System.out.println("Your transaction cross limited");
+                            }
+                        }
+
                     } else if (givingNumber == 3) {
                         System.out.println("Enter amount you want to withdraw : ");
                         withdrawalAmounts[x] = input.nextInt();
                         if (withdrawalAmounts[x] > 0) {
-                            currentAccounts[x].WithDraw(withdrawalAmounts[x]);
+                            if(count<totalTransaction){
+                                currentAccounts[x].WithDraw(withdrawalAmounts[x]);
+                                transactionCurrentAccount[count] = - withdrawalAmounts[x];
+                             //   transaction[x][count] = - withdrawalAmounts[x];
+                                count++;
+                            }
                         } else {
                             System.out.println("Negative value amount are not allowed");
                         }
-                    } else if (givingNumber == 4) {
-                        System.out.println("*********Profit*************");
-                       currentAccounts[x].calculateProfit();
-                    } else if (givingNumber == 6) {
+                    }
+                    else if (givingNumber == 4) {
+                        System.out.println("***********Transaction history*************");
+                        System.out.println();
+                        System.out.println("Account name : " + name[x]);
+                        System.out.println();
+                        for(int z = 0;z<totalTransaction;z++){
+                            if(transactionCurrentAccount[z]!=0){
+                                System.out.println("Transaction - " + (z+1) + " : " + transactionCurrentAccount[z]);
+                            }
+                        }
+                        System.out.println();
+
+
+                    }
+                    else if(givingNumber == 6){
+                        System.out.println("*************Money Transfer***************");
+                        System.out.println();
+                        boolean isPhoneNumberisMatched = false;
+                        input.nextLine();   // 0325465655
+                        System.out.print("Enter the phone number which you want to transfer : ");
+                        String transferNumber = input.nextLine();
+                        for(int i = 0;i<totalAccounts;i++){
+                            if(transferNumber.equalsIgnoreCase(phoneNo[i])){
+                                isPhoneNumberisMatched = true;
+                                System.out.print("Enter amount you have to transfer : ");
+                                int transferAmount = input.nextInt();
+                                if(transferAmount<=savingsAccounts[x].Balance()){
+                                    savingsAccounts[x].WithDraw(transferAmount);
+                                    System.out.println("************************");
+                                    System.out.println("Account name you have transfer : " + name[i]);
+                                    currentAccounts[x].deposit(transferAmount);
+                                    System.out.println("************************");
+                                    // 035242775
+
+                                }
+
+                            }
+                        }
+                        if(!isPhoneNumberisMatched){
+                            System.out.println("The phone number is invaild ");
+                        }
+                    }
+                    else if (givingNumber == 6) {
                         break;
                     }
                 }
